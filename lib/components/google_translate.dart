@@ -10,8 +10,10 @@ class GoogleTranslate {
   // apiKey: google cloud console api key
   @protected
   final String apiKey;
+
   // sourceLanguage: language of you text to translate
   String? sourceLanguage;
+
   // targetLanguage: language of your translated text
   String targetLanguage;
 
@@ -54,6 +56,28 @@ class GoogleTranslate {
       text: text,
       source: source,
       target: target,
+      apiKey: apiKey,
+    );
+  }
+
+  Future<Map<String, dynamic>> translateAndDetect(
+    String text, {
+    String? sourceLanguage,
+    String? targetLanguage,
+  }) {
+    final source = sourceLanguage ?? this.sourceLanguage;
+    final target = targetLanguage ?? this.targetLanguage;
+    return _reopsitory.translateAndDetect(
+      text: text,
+      source: source,
+      target: target,
+      apiKey: apiKey,
+    );
+  }
+
+  Future<String> detect(String text) {
+    return _reopsitory.detect(
+      text: text,
       apiKey: apiKey,
     );
   }

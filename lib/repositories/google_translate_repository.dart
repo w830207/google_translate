@@ -65,4 +65,65 @@ class GoogleTranslateReopsitory {
     }
     return text;
   }
+
+  Future<Map<String, dynamic>> translateAndDetect({
+    required String text,
+    String? source,
+    required String target,
+    required String apiKey,
+  }) async {
+    await completer.future;
+
+    try {
+      Response response = await _dio.get(
+        "language/translate/v2",
+        queryParameters: {
+          "key": apiKey,
+          "q": text,
+          "source": source,
+          "target": target,
+          "format": "text",
+        },
+      );
+
+      if ((response.statusCode == 200 || response.statusCode == 304) &&
+          response.data?["data"]?["translations"] != null &&
+          response.data["data"]?["translations"]?.isNotEmpty) {
+        return response.data["data"]?["translations"].first;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return {
+      "detectedSourceLanguage": "",
+      "model": "",
+      "translatedText": "",
+    };
+  }
+
+  Future<String> detect({
+    required String text,
+    required String apiKey,
+  }) async {
+    await completer.future;
+
+    try {
+      Response response = await _dio.get(
+        "language/translate/v2/detect",
+        queryParameters: {
+          "key": apiKey,
+          "q": text,
+        },
+      );
+
+      if ((response.statusCode == 200 || response.statusCode == 304) &&
+          response.data["data"]?["detections"] != null &&
+          response.data["data"]?["detections"]?.isNotEmpty) {
+        text = response.data["data"]?["detections"].first.first["language"];
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return text;
+  }
 }
